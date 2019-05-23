@@ -1,8 +1,8 @@
 from django.conf.urls import url
-from apps.goods import views
+from .import views
 
-
+app_name = 'goods'
 urlpatterns = [
-    url(r'^index$',views.index),
-    url(r'',views.index),
+    url(r'^$',views.index,name='index'),
+
 ]

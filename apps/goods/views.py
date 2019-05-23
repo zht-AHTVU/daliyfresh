@@ -5,4 +5,4 @@ from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-    return HttpResponse('goods OK')
+    return render(request,'index.html')

@@ -11,8 +11,6 @@ SECRET_KEY = 'pzsf^8mf&7iwt%*kt-jt*rgxkfdv(4_b!l^zk(a5r^&&6l%3_s'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -26,8 +24,7 @@ INSTALLED_APPS = [
     'apps.goods.apps.GoodsConfig',
     'apps.cart.apps.CartConfig',
     'apps.order.apps.OrderConfig',
-    'tinymce',
-
+    'tinymce',    #富文本编辑器注册
 ]
 
 MIDDLEWARE = [
@@ -75,7 +72,7 @@ DATABASES = {
         'LOCAL':'localhost',
     }
 }
-
+AUTH_USER_MODEL = 'user.User'   #django认证系统使用的模型类
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -115,3 +112,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+
+TINYMCE_DEFAULT_CONFIG = {
+    'theme':'advance',
+    'width':600,
+    'height':400,
+}

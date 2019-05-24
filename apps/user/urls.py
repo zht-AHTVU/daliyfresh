@@ -1,8 +1,9 @@
 from django.conf.urls import url
-from apps.user import views
+from apps.user.views import RegisterView
 
 
+
+app_name = 'user'
 urlpatterns = [
-    url(r'^register$',views.register),
-    url(r'^register_handle$',views.register_handle),
+    url(r'register',RegisterView.as_view()),
 ]

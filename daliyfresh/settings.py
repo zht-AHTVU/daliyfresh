@@ -73,6 +73,7 @@ DATABASES = {
     }
 }
 AUTH_USER_MODEL = 'user.User'   #django认证系统使用的模型类
+APPEND_SLASH=False
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -98,7 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'Asia/Shanghai'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

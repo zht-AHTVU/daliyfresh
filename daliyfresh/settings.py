@@ -115,7 +115,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 
 TINYMCE_DEFAULT_CONFIG = {
-    'theme':'advance',
+    'theme':'advanced',
     'width':600,
     'height':400,
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.126.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'desingers@126.com'
+EMAIL_HOST_PASSWORD = 'mpGGUEM65xLaiueg'
+EMAIL_FROM = 'ZHT<desingers@126.com>'

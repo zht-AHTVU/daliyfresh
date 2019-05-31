@@ -8,6 +8,8 @@ from django.conf import settings
 from django.http import HttpResponse
 from itsdangerous import SignatureExpired
 from celery_tasks.tasks import send_register_active_email
+from django.contrib.auth import authenticate, login, logout
+
 
 class RegisterView(View):
     '''注册'''
@@ -68,5 +70,50 @@ class ActiveView(View):
 
 class LoginView(View):
     def get(self,request):
-        return render(request,'login.html')
+        if 'username' in request.COOKIES:
+            username = request.COOKIES.get('username')
+            checked = 'checked'
+        else:
+            username = ''
+            checked = ''
+        return render(request,'login.html',{'username':username,'checked':checked})
+
+    def post(self,request):
+        username = request.POST.get('username')
+        password = request.POST.get('pwd')
+        remember = request.POST.get('remember')
+
+        if not all([username, password]):
+            return render(request, 'login.html', {'errmsg': '请输入用户名、密码！'})
+        user = authenticate(username=username,password=password)
+        if user is not None:
+            #记录用户登录状态
+            login(request,user)
+            # 获取登录后跳转地址，默认跳转到首页
+            next_url = request.GET.get('next',reverse('goods:index'))
+            response = redirect(next_url)
+            if remember == 'on':
+                response.set_cookie('username',username,max_age=7*34*3600)
+            else:
+                response.delete_cookie('username')
+            return response
+        else:
+            return render(request, 'login.html', {'errmsg': '账号未激活或用户名、密码错误！'})
+
+class UserInfo(View):
+    def get(self,request):
+        return render(request,'user_center_info.html',{'page':'info'})
+
+class UserOrder(View):
+    def get(self,request):
+        return render(request,'user_center_order.html',{'page':'order'})
+
+class UserAddr(View):
+    def get(self,request):
+        return render(request,'user_center_addr.html',{'page':'addr'})
+
+class UserCart(View):
+    def get(self,request):
+        return render(request,'cart.html')
+
 

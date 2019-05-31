@@ -126,3 +126,20 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'desingers@126.com'
 EMAIL_HOST_PASSWORD = 'mpGGUEM65xLaiueg'
 EMAIL_FROM = 'ZHT<desingers@126.com>'
+
+# django的缓存配置 django-redis
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/9",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+# 配置session存储
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+# 配置登录地址
+LOGIN_URL = '/user/login'

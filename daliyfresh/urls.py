@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^user/', include('user.urls', namespace='user')),
     url(r'^order/',include('order.urls')),
     url(r'^cart/',include('cart.urls')),
+    url(r'^goods/',include('goods.urls',namespace='goods')),
     url(r'^',include('goods.urls',namespace='goods')),
 ]

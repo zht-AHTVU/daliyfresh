@@ -1,4 +1,4 @@
-from apps.user.models import User
+from apps.user.models import User,Address
 from django.shortcuts import render,redirect
 from django.urls import reverse
 import re
@@ -9,6 +9,8 @@ from django.http import HttpResponse
 from itsdangerous import SignatureExpired
 from celery_tasks.tasks import send_register_active_email
 from django.contrib.auth import authenticate, login, logout
+from utils.mixin import LoginRequiredMixin
+from django.db import models
 
 
 class RegisterView(View):
@@ -100,19 +102,64 @@ class LoginView(View):
         else:
             return render(request, 'login.html', {'errmsg': '账号未激活或用户名、密码错误！'})
 
-class UserInfo(View):
+class LogoutView(View):
     def get(self,request):
-        return render(request,'user_center_info.html',{'page':'info'})
+        logout(request)
+        return redirect(reverse('goods:index'))
 
-class UserOrder(View):
+class UserInfoView(LoginRequiredMixin, View):
     def get(self,request):
+        user = request.user
+        address = Address.objects.get_default_address(user)
+        return render(request,'user_center_info.html',{'page':'info','address':address})
+
+class UserOrderView(LoginRequiredMixin, View):
+    def get(self,request):
+        # 获取用户的订单信息
         return render(request,'user_center_order.html',{'page':'order'})
 
-class UserAddr(View):
-    def get(self,request):
-        return render(request,'user_center_addr.html',{'page':'addr'})
 
-class UserCart(View):
+
+class UserAddrView(LoginRequiredMixin, View):
+    def get(self,request):
+        # 获取用户的默认收获地址
+        user = request.user
+        # try:
+        #     address = Address.objects.get(user=user,is_default=True)
+        # except Address.DoesNotExist:
+        #     address = None
+        # add_obj = Address.objects
+        address =Address.objects.get_default_address(user)
+        return render(request,'user_center_addr.html',{'page':'addr','address':address})
+    def post(self,request):
+        # 接收数据
+        receiver = request.POST.get('receiver')
+        addr = request.POST.get('addr')
+        zip_code = request.POST.get('zip_code','')
+        tel = request.POST.get('tel')
+        # 校验数据
+        if not all([receiver,addr,tel]):
+            return render(request,'user_center_addr.html',{'errmsg':'数据不完整'})
+        # 校验手机号
+        if not re.match(r'^1[3|4|5|7|8|9][0-9]{9}$',tel):
+            return render(request, 'user_center_addr.html', {'errmsg': '请输入正确的手机号'})
+        # 存储数据
+        # 如果已有默认收获地址，不作默认，没有的话作为默认地址
+        address = Address.objects.get_default_address(request.user)
+        if address:
+            is_default = False
+        else:
+            is_default = True
+        Address.objects.create(user=user,
+                               receiver=receiver,
+                               addr=addr,
+                               zip_code=zip_code,
+                               phone=tel,
+                               is_default=is_default)
+
+        return redirect(reverse('user:addr'))
+
+class UserCartView(LoginRequiredMixin, View):
     def get(self,request):
         return render(request,'cart.html')
 
